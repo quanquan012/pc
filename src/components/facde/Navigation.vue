@@ -1,9 +1,16 @@
 <template>
   <el-aside width="240px" class="navigation">
     <el-scrollbar style="height: 100%">
+
       <el-menu :default-active="$route.path" mode="vertical" background-color="#545c64" @select="handleSelect"
                text-color="#fff" active-text-color="#ffd04b" light router>
-        <el-menu-item v-for="(item, index) in menus" :key="index" :index="item.path">{{item.title}}</el-menu-item>
+        <template v-for="(item, index) in menus">
+          <el-submenu v-if="item.children.length>0" :key="index" :index="item.path">
+            <template slot="title">{{item.name}}</template>
+            <el-menu-item v-for="child in item.children" :index="child.path" :key="child.path">{{child.name}}</el-menu-item>
+          </el-submenu>
+          <el-menu-item v-if="!item.children.length>0" :key="index" :index="item.path">{{item.name}}</el-menu-item>
+        </template>
       </el-menu>
     </el-scrollbar>
   </el-aside>
@@ -15,47 +22,19 @@
     data () {
       return {
         menus: [{
-          title: '用户列表',
-          path: '/users'
+          name: '用户列表',
+          path: '/users',
+          children: [{
+            name: '123',
+            path: '/test'
+          },{
+            name: '456',
+            path: '/test/t'
+          }]
         }, {
-          title: '商品分类',
-          path: '/categories'
-        },{
-          title: '用户列表',
-          path: '/users'
-        }, {
-          title: '商品分类',
-          path: '/categories'
-        },{
-          title: '用户列表',
-          path: '/users'
-        }, {
-          title: '商品分类',
-          path: '/categories'
-        },{
-          title: '用户列表',
-          path: '/users'
-        }, {
-          title: '商品分类',
-          path: '/categories'
-        },{
-          title: '用户列表',
-          path: '/users'
-        }, {
-          title: '商品分类',
-          path: '/categories'
-        },{
-          title: '用户列表',
-          path: '/users'
-        }, {
-          title: '商品分类',
-          path: '/categories'
-        },{
-          title: '用户列表',
-          path: '/users'
-        }, {
-          title: '商品分类',
-          path: '/categories'
+          name: '商品分类',
+          path: '/categories',
+          children: []
         }]
       }
     },
@@ -85,6 +64,10 @@
     border-right-width: 0;
     width: 240px;
     overflow-x: hidden;
+  }
+
+  .el-submenu {
+    text-align: center;
   }
 
   .el-menu-item {
