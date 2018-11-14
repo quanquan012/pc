@@ -181,124 +181,124 @@
 </template>
 
 <script>
-  export default {
-    name: 'user',
-    data () {
-      return {
-        tableData: [],
-        searchParams: {
-          merchantName: '',
-          merchantPhone: '',
-          createTime: '',
-          pageNum: 1,
-          pageSize: 1
-        },
-        merchantForm: {
-          openId: '',
-          merchantName: '',
-          merchantCode: '',
-          merchantPhone: '',
-          merchantAddress: '',
-          createTime: ''
-        },
-        formLabelWidth: '100px',
-        dialogFormVisible: false,
-        editFormVisible: false,
-        total: 0
-      }
+export default {
+  name: 'user',
+  data () {
+    return {
+      tableData: [],
+      searchParams: {
+        merchantName: '',
+        merchantPhone: '',
+        createTime: '',
+        pageNum: 1,
+        pageSize: 1
+      },
+      merchantForm: {
+        openId: '',
+        merchantName: '',
+        merchantCode: '',
+        merchantPhone: '',
+        merchantAddress: '',
+        createTime: ''
+      },
+      formLabelWidth: '100px',
+      dialogFormVisible: false,
+      editFormVisible: false,
+      total: 0
+    }
+  },
+  created () {
+    this.onSearch()
+  },
+  methods: {
+    handleSave (index, row) {
+      this.dialogFormVisible = true
+      this.merchantForm = {}
+      console.log(index, row)
     },
-    created () {
+    handleEdit (index, row) {
+      this.editFormVisible = true
+      this.merchantForm = Object.assign({}, row)
+      console.log(index, row)
+    },
+    handleDelete (index, row) {
+      this.$confirm('此操作将永久删除该商户, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.deleteMerchant(row.primaryKey)
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+      console.log(index, row)
+    },
+    onConfirm () {
+      this.dialogFormVisible = false
+      this.saveMerchant(this.merchantForm)
+    },
+    editConfirm () {
+      this.editFormVisible = false
+      this.editMerchant(this.merchantForm)
+    },
+    onSearch () {
+      this.searchPageByParams(this.searchParams)
+    },
+    onReset (formName) {
+      this.$refs[formName].resetFields()
+    },
+    handleSizeChange (val) {
+      console.log(`每页 ${val} 条`)
+    },
+    handleCurrentChange (val) {
       this.onSearch()
+      console.log(`当前页: ${val}`)
     },
-    methods: {
-      handleSave (index, row) {
-        this.dialogFormVisible = true
-        this.merchantForm = {}
-        console.log(index, row)
-      },
-      handleEdit (index, row) {
-        this.editFormVisible = true
-        this.merchantForm = Object.assign({}, row)
-        console.log(index, row)
-      },
-      handleDelete (index, row) {
-        this.$confirm('此操作将永久删除该商户, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.deleteMerchant(row.primaryKey)
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          })
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          })
-        })
-        console.log(index, row)
-      },
-      onConfirm () {
-        this.dialogFormVisible = false
-        this.saveMerchant(this.merchantForm)
-      },
-      editConfirm () {
-        this.editFormVisible = false
-        this.editMerchant(this.merchantForm)
-      },
-      onSearch () {
-        this.searchPageByParams(this.searchParams)
-      },
-      onReset (formName) {
-        this.$refs[formName].resetFields()
-      },
-      handleSizeChange (val) {
-        console.log(`每页 ${val} 条`)
-      },
-      handleCurrentChange (val) {
+    searchPageByParams (searchFilters) {
+      this.$http.get('/merchants', {
+        params: {
+          type: 'page',
+          pageNum: searchFilters.pageNum,
+          pageSize: searchFilters.pageSize,
+          merchantName: searchFilters.merchantName,
+          merchantPhone: searchFilters.merchantPhone,
+          createTime: searchFilters.createTime
+        }
+      }).then((response) => {
+        const merchants = response.data
+        console.log(merchants)
+        this.total = merchants.data.total
+        this.searchParams.pageSize = merchants.data.pageSize
+        this.tableData = merchants.data.list
+        console.log(this.tableData)
+      })
+    },
+    saveMerchant (merchantForm) {
+      const p = JSON.parse(JSON.stringify(merchantForm))
+      this.$http.post('/merchants', p).then((response) => {
         this.onSearch()
-        console.log(`当前页: ${val}`)
-      },
-      searchPageByParams (searchFilters) {
-        this.$http.get('/merchants', {
-          params: {
-            type: 'page',
-            pageNum: searchFilters.pageNum,
-            pageSize: searchFilters.pageSize,
-            merchantName: searchFilters.merchantName,
-            merchantPhone: searchFilters.merchantPhone,
-            createTime: searchFilters.createTime
-          }
-        }).then((response) => {
-          const merchants = response.data
-          console.log(merchants)
-          this.total = merchants.data.total
-          this.searchParams.pageSize = merchants.data.pageSize
-          this.tableData = merchants.data.list
-          console.log(this.tableData)
-        })
-      },
-      saveMerchant (merchantForm) {
-        const p = JSON.parse(JSON.stringify(merchantForm))
-        this.$http.post('/merchants', p).then((response) => {
-          this.onSearch()
-        })
-      },
-      editMerchant (merchantForm) {
-        const p = JSON.parse(JSON.stringify(merchantForm))
-        this.$http.put('/merchants', p).then((response) => {
-          this.onSearch()
-        })
-      },
-      deleteMerchant (primaryKey) {
-        this.$http.delete('/merchants/' + primaryKey).then((response) => {
-          this.onSearch()
-        })
-      }
+      })
+    },
+    editMerchant (merchantForm) {
+      const p = JSON.parse(JSON.stringify(merchantForm))
+      this.$http.put('/merchants', p).then((response) => {
+        this.onSearch()
+      })
+    },
+    deleteMerchant (primaryKey) {
+      this.$http.delete('/merchants/' + primaryKey).then((response) => {
+        this.onSearch()
+      })
     }
   }
+}
 </script>
 
 <style lang="scss" scoped>

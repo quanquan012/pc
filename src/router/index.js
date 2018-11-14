@@ -13,7 +13,7 @@ export default new Router({
       name: 'Facde',
       component: Facde,
       children: [{
-        path: '/users',
+        path: '/merchants',
         name: 'user',
         component: user
       }, {
