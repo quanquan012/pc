@@ -108,7 +108,7 @@
           <el-row>
             <el-col :span="12">
               <el-form-item label="日期" :label-width="formLabelWidth">
-                <el-date-picker type="date" :editable="false" format="yyyy 年 MM 月 dd 日" placeholder="选择日期"
+                <el-date-picker type="datetime" :editable="false" value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期"
                                 v-model="merchantForm.createTime"></el-date-picker>
               </el-form-item>
             </el-col>
@@ -158,7 +158,7 @@
           <el-row>
             <el-col :span="12">
               <el-form-item label="日期" :label-width="formLabelWidth">
-                <el-date-picker type="date" :disabled="true" format="yyyy 年 MM 月 dd 日" placeholder="选择日期"
+                <el-date-picker type="datetime" :disabled="true" value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期"
                                 v-model="merchantForm.createTime"></el-date-picker>
               </el-form-item>
             </el-col>

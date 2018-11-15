@@ -2,7 +2,7 @@
   <el-aside width="240px" class="navigation">
     <el-scrollbar style="height: 100%">
 
-      <el-menu :default-active="$router.path" mode="vertical" background-color="#545c64" @select="handleSelect"
+      <el-menu :default-active="$route.path" mode="vertical" background-color="#545c64" @select="handleSelect"
                text-color="#fff" active-text-color="#ffd04b" light router>
         <template v-for="(item, index) in menus">
           <el-submenu v-if="item.children.length>0" :key="index" :index="item.navigatorPath">

@@ -11,16 +11,16 @@
 </template>
 
 <script>
-  import top from './top.vue'
-  import navigation from './navigation.vue'
-  import home from './home.vue'
+import top from './top.vue'
+import navigation from './navigation.vue'
+import home from './home.vue'
 
-  export default {
-    name: 'facde',
-    components: {
-      top, navigation, home
-    }
+export default {
+  name: 'facde',
+  components: {
+    top, navigation, home
   }
+}
 </script>
 
 <style>
