@@ -2,7 +2,7 @@
   <el-aside width="240px" class="navigation">
     <el-scrollbar style="height: 100%">
 
-      <el-menu :default-active="$route.path" mode="vertical" background-color="#545c64" @select="handleSelect"
+      <el-menu :default-active="$router.path" mode="vertical" background-color="#545c64" @select="handleSelect"
                text-color="#fff" active-text-color="#ffd04b" light router>
         <template v-for="(item, index) in menus">
           <el-submenu v-if="item.children.length>0" :key="index" :index="item.navigatorPath">
@@ -26,24 +26,10 @@
 
 <script>
 export default {
-  name: 'Navigation',
+  name: 'navigation',
   data () {
     return {
-      menus: [/* {
-        name: '用户列表',
-        path: '/merchants',
-        children: [{
-          name: '123',
-          path: '/test'
-        }, {
-          name: '456',
-          path: '/test/t'
-        }]
-      }, {
-        name: '商品分类',
-        path: '/categories',
-        children: []
-      } */]
+      menus: []
     }
   },
   created: function () {
@@ -54,6 +40,7 @@ export default {
       console.log(key, keyPath)
     },
     listNavigators () {
+      console.log(this.$http.defaults.headers)
       this.$http.get('/navigators').then((response) => {
         const navigators = response.data
         console.log(navigators)
@@ -84,13 +71,5 @@ export default {
     width: 240px;
     overflow-x: hidden;
   }
-
-  /*.el-submenu {*/
-  /*text-align: center;*/
-  /*}*/
-
-  /*.el-menu-item {*/
-  /*text-align: center;*/
-  /*}*/
 
 </style>

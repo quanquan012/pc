@@ -1,24 +1,24 @@
 <template>
   <div class="main">
     <el-container direction="vertical" class="main">
-      <Header></Header>
+      <top></top>
       <el-container class="main" style="overflow-x: hidden;">
-        <Navigation></Navigation>
-        <Content></Content>
+        <navigation></navigation>
+        <home></home>
       </el-container>
     </el-container>
   </div>
 </template>
 
 <script>
-  import Header from './Header.vue'
-  import Navigation from './Navigation.vue'
-  import Content from './Content.vue'
+  import top from './top.vue'
+  import navigation from './navigation.vue'
+  import home from './home.vue'
 
   export default {
-    name: 'Facde',
+    name: 'facde',
     components: {
-      Header, Navigation, Content
+      top, navigation, home
     }
   }
 </script>
