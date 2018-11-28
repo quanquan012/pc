@@ -31,12 +31,13 @@
     name: 'top',
     methods: {
       logout(){
-        this.$store.commit('del_token');
-        let redirect = decodeURIComponent(this.$route.query.redirect || '/');
+        this.$http.delete('/login')
+        this.$store.commit('del_token')
+        let redirect = decodeURIComponent(this.$route.query.redirect || '/')
         if(redirect){
           this.$router.push({//你需要接受路由的参数再跳转
             path: redirect
-          });
+          })
         }
       }
     }

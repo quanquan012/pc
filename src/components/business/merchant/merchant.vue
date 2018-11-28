@@ -23,7 +23,7 @@
             <el-col :span="4">
               <el-form-item>
                 <el-button type="primary" icon="el-icon-search" @click="onSearch()">查询</el-button>
-                <el-button @click="onReset('userSearchForm')">重置</el-button>
+                <el-button icon="el-icon-refresh" @click="onReset('userSearchForm')">重置</el-button>
               </el-form-item>
             </el-col>
           </el-form>
@@ -31,20 +31,27 @@
       </div>
     </div>
     <div class="page">
-      <el-pagination
-        small
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page.sync="searchParams.pageNum"
-        :page-size="searchParams.pageSize"
-        layout="total, prev, pager, next"
-        :total="total">
-      </el-pagination>
+      <el-row>
+        <el-col :span="2">
+          <el-button icon="el-icon-plus" size="mini" type="primary" @click="handleSave()">新增</el-button>
+        </el-col>
+        <el-col :span="22">
+          <el-pagination
+            small
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page.sync="searchParams.pageNum"
+            :page-size="searchParams.pageSize"
+            layout="total, prev, pager, next"
+            :total="total">
+          </el-pagination>
+        </el-col>
+      </el-row>
     </div>
     <div class="grid">
       <el-table :data="tableData" size="mini" height="460px">
         <el-table-column prop="primaryKey" label="主键" v-if="false"></el-table-column>
-        <el-table-column fixed label="日期" align="center">
+        <el-table-column fixed label="日期" align="center"  width="200">
           <template slot-scope="scope">
             <i class="el-icon-time"></i>
             <span style="margin-left: 10px">{{ scope.row.createTime }}</span>
@@ -68,9 +75,8 @@
                          align="center"></el-table-column>
         <el-table-column fixed="right" label="操作" align="center">
           <template slot-scope="scope">
-            <el-button size="small" type="text" @click="handleSave(scope.$index, scope.row)">新增</el-button>
-            <el-button size="small" type="text" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-button size="small" type="text" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+            <el-button icon="el-icon-edit" size="small" type="text" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+            <el-button icon="el-icon-delete" size="small" type="text" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -191,7 +197,7 @@ export default {
         merchantPhone: '',
         createTime: '',
         pageNum: 1,
-        pageSize: 1
+        pageSize: 10
       },
       merchantForm: {
         openId: '',
@@ -211,15 +217,13 @@ export default {
     this.onSearch()
   },
   methods: {
-    handleSave (index, row) {
+    handleSave () {
       this.dialogFormVisible = true
       this.merchantForm = {}
-      console.log(index, row)
     },
     handleEdit (index, row) {
       this.editFormVisible = true
       this.merchantForm = Object.assign({}, row)
-      console.log(index, row)
     },
     handleDelete (index, row) {
       this.$confirm('此操作将永久删除该商户, 是否继续?', '提示', {
@@ -238,7 +242,6 @@ export default {
           message: '已取消删除'
         })
       })
-      console.log(index, row)
     },
     onConfirm () {
       this.dialogFormVisible = false
@@ -259,7 +262,6 @@ export default {
     },
     handleCurrentChange (val) {
       this.onSearch()
-      console.log(`当前页: ${val}`)
     },
     searchPageByParams (searchFilters) {
       this.$http.get('/merchants', {
@@ -273,11 +275,9 @@ export default {
         }
       }).then((response) => {
         const merchants = response.data
-        console.log(merchants)
         this.total = merchants.data.total
         this.searchParams.pageSize = merchants.data.pageSize
         this.tableData = merchants.data.list
-        console.log(this.tableData)
       })
     },
     saveMerchant (merchantForm) {

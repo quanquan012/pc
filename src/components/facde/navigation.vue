@@ -37,15 +37,16 @@ export default {
   },
   methods: {
     handleSelect (key, keyPath) {
-      console.log(key, keyPath)
+
     },
     listNavigators () {
-      console.log(this.$http.defaults.headers)
-      this.$http.get('/navigators').then((response) => {
+      this.$http.get('/navigators',{
+        params:{
+          type: 'byCurrentAuth'
+        }
+      }).then((response) => {
         const navigators = response.data
-        console.log(navigators)
         this.menus = navigators.data
-        console.log(this.menus)
       })
     }
   }

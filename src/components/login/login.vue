@@ -1,19 +1,21 @@
 <template>
   <div class="login">
-    <el-form :model="loginForm" ref="loginForm" label-width="40px">
-      <el-form-item prop="accountName">
-        <el-input placeholder="账户" v-model="loginForm.accountName"></el-input>
-      </el-form-item>
-      <el-form-item prop="accountPass">
-        <el-input placeholder="密码" type="password" v-model="loginForm.accountPass" auto-complete="off"></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="login()">登陆</el-button>
-      </el-form-item>
-      <el-form-item>
-        <el-button @click="onReset('loginForm')">重置</el-button>
-      </el-form-item>
-    </el-form>
+    <div class="form">
+      <el-form :model="loginForm" ref="loginForm" label-width="40px">
+        <el-form-item prop="accountName">
+          <el-input placeholder="账户" v-model="loginForm.accountName"></el-input>
+        </el-form-item>
+        <el-form-item prop="accountPass">
+          <el-input placeholder="密码" type="password" v-model="loginForm.accountPass" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button @click="login()">登陆</el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-button @click="onReset('loginForm')">重置</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
   </div>
 </template>
 
@@ -30,7 +32,6 @@
     },
     methods: {
       login () {
-        console.log(this.loginForm)
         this.loginByAccount(this.loginForm)
       },
       onReset (formName) {
@@ -42,7 +43,6 @@
           const ret = response.data
           let token = ret.token
           if (token) {
-            console.log(token)
             this.$store.commit('set_token', token);
             this.$http.defaults.headers['token'] = token
             let redirect = decodeURIComponent(this.$route.query.redirect || '/facde');
@@ -59,16 +59,19 @@
 </script>
 
 <style scoped>
-  .login {
+  .login{
+    height: 100%;
+    width: 100%;
+    background-color: #525C64;
+  }
+  .form {
     width: 30%;
     position: fixed;
     top: 25%;
     left: 0;
     right: 0;
     margin: 0 auto;
-    /*border: 1px solid #000;*/
     padding: 40px;
-    /*background-color: #7e8c8d;*/
   }
 
   .el-button {

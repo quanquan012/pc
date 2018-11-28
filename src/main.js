@@ -16,12 +16,13 @@ Vue.use(ElementUI)
 Vue.config.productionTip = false
 
 router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.requireAuth)) {  // 判断该路由是否需要登录权限
+  if (to.meta.requireAuth) {  // 判断该路由是否需要登录权限
     let token = store.getters.token;
     axios.defaults.headers['token'] = token
     if (token) {  // 判断当前的token是否存在
-      console.log('存在token')
-      next()
+      if(to.meta.show){
+        next()
+      }
     } else {
       next({
         path: '/',

@@ -23,7 +23,7 @@
             <el-col :span="4">
               <el-form-item>
                 <el-button type="primary" icon="el-icon-search" @click="onSearch()">查询</el-button>
-                <el-button @click="onReset('userSearchForm')">重置</el-button>
+                <el-button icon="el-icon-refresh" @click="onReset('userSearchForm')">重置</el-button>
               </el-form-item>
             </el-col>
           </el-form>
@@ -31,20 +31,27 @@
       </div>
     </div>
     <div class="page">
-      <el-pagination
-        small
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page.sync="searchParams.pageNum"
-        :page-size="searchParams.pageSize"
-        layout="total, prev, pager, next"
-        :total="total">
-      </el-pagination>
+      <el-row>
+        <el-col :span="2">
+          <el-button icon="el-icon-plus" size="mini" type="primary" @click="handleSave()">新增</el-button>
+        </el-col>
+        <el-col :span="22">
+          <el-pagination
+            small
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page.sync="searchParams.pageNum"
+            :page-size="searchParams.pageSize"
+            layout="total, prev, pager, next"
+            :total="total">
+          </el-pagination>
+        </el-col>
+      </el-row>
     </div>
     <div class="grid">
       <el-table :data="tableData" size="mini" height="460px">
         <el-table-column prop="primaryKey" label="主键" v-if="false"></el-table-column>
-        <el-table-column fixed label="日期" align="center">
+        <el-table-column fixed label="日期" align="center"  width="200">
           <template slot-scope="scope">
             <i class="el-icon-time"></i>
             <span style="margin-left: 10px">{{ scope.row.createTime }}</span>
@@ -68,9 +75,9 @@
                          <!--align="center"></el-table-column>-->
         <el-table-column fixed="right" label="操作" align="center">
           <template slot-scope="scope">
-            <el-button size="small" type="text" @click="handleSave(scope.$index, scope.row)">新增</el-button>
-            <el-button size="small" type="text" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-button size="small" type="text" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+            <el-button icon="el-icon-view" size="small" type="text" @click="handleAuth(scope.$index, scope.row)">权限</el-button>
+            <el-button icon="el-icon-edit" size="small" type="text" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+            <el-button icon="el-icon-delete" size="small" type="text" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -109,21 +116,12 @@
                                 v-model="accountForm.createTime"></el-date-picker>
               </el-form-item>
             </el-col>
-          </el-row>
-          <el-row>
             <el-col :span="12">
               <el-form-item label="密码" :label-width="formLabelWidth" hidden>
                 <el-input v-model="accountForm.accountPass" :editable="false" autocomplete="off"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
-          <!--<el-row>-->
-            <!--<el-col :span="24">-->
-              <!--<el-form-item label="地址" :label-width="formLabelWidth">-->
-                <!--<el-input v-model="accountForm.accountAddress" type="textarea" :rows="2"></el-input>-->
-              <!--</el-form-item>-->
-            <!--</el-col>-->
-          <!--</el-row>-->
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button size="mini" @click="dialogFormVisible = false">取 消</el-button>
@@ -174,17 +172,36 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <!--<el-row>-->
-            <!--<el-col :span="24">-->
-              <!--<el-form-item label="地址" :label-width="formLabelWidth">-->
-                <!--<el-input v-model="accountForm.accountAddress" type="textarea" :rows="2"></el-input>-->
-              <!--</el-form-item>-->
-            <!--</el-col>-->
-          <!--</el-row>-->
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button size="mini" @click="editFormVisible = false">取 消</el-button>
           <el-button size="mini" type="primary" @click="editConfirm()">确 定</el-button>
+        </div>
+      </el-dialog>
+    </div>
+    <div class="form">
+      <el-dialog title="权限分配" :visible.sync="editAuthVisible">
+        <div style="text-align: center">
+          <el-transfer style="text-align: left; display: inline-block"
+                       :titles="['未选权限', '已选权限']"
+                       v-model="auths.right"
+                       :button-texts="['', '']"
+                       :format="{
+                          noChecked: '${total}',
+                          hasChecked: '${checked}/${total}'
+                        }"
+                       :props="{
+                          key: 'primaryKey',
+                          label: 'authName',
+                          disabled: 'disable'
+                        }"
+                       :data="auths.left">
+
+          </el-transfer>
+        </div>
+        <div slot="footer" class="dialog-footer">
+          <el-button size="mini" @click="editAuthVisible = false">取 消</el-button>
+          <el-button size="mini" type="primary" @click="authConfirm()">确 定</el-button>
         </div>
       </el-dialog>
     </div>
@@ -196,13 +213,18 @@ export default {
   name: 'account',
   data () {
     return {
+      auths:{
+        left:[],
+        right: [],
+        accountCode: ''
+      },
       tableData: [],
       searchParams: {
         accountName: '',
         accountPhone: '',
         createTime: '',
         pageNum: 1,
-        pageSize: 1
+        pageSize: 10
       },
       accountForm: {
         openId: '',
@@ -216,6 +238,7 @@ export default {
       formLabelWidth: '100px',
       dialogFormVisible: false,
       editFormVisible: false,
+      editAuthVisible: false,
       total: 0
     }
   },
@@ -223,18 +246,22 @@ export default {
     this.onSearch()
   },
   methods: {
-    handleSave (index, row) {
+    handleSave () {
       this.dialogFormVisible = true
-      this.accountForm = {}
-      console.log(index, row)
+      this.accountForm = {
+        }
+    },
+    handleAuth (index, row){
+      this.editAuthVisible = true
+      console.log(row.accountCode)
+      this.searchAuths(row.accountCode)
     },
     handleEdit (index, row) {
       this.editFormVisible = true
       this.accountForm = Object.assign({}, row)
-      console.log(index, row)
     },
     handleDelete (index, row) {
-      this.$confirm('此操作将永久删除该商户, 是否继续?', '提示', {
+      this.$confirm('此操作将永久删除该账户, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -250,11 +277,15 @@ export default {
           message: '已取消删除'
         })
       })
-      console.log(index, row)
     },
     onConfirm () {
       this.dialogFormVisible = false
       this.saveAccount(this.accountForm)
+    },
+    authConfirm (){
+      this.editAuthVisible = false
+      console.log(this.auths.accountCode)
+      this.updateAccountAuths(this.auths)
     },
     editConfirm () {
       this.editFormVisible = false
@@ -271,7 +302,6 @@ export default {
     },
     handleCurrentChange (val) {
       this.onSearch()
-      console.log(`当前页: ${val}`)
     },
     searchPageByParams (searchFilters) {
       this.$http.get('/accounts', {
@@ -285,11 +315,9 @@ export default {
         }
       }).then((response) => {
         const accounts = response.data
-        console.log(accounts)
         this.total = accounts.data.total
         this.searchParams.pageSize = accounts.data.pageSize
         this.tableData = accounts.data.list
-        console.log(this.tableData)
       })
     },
     saveAccount (accountForm) {
@@ -306,6 +334,25 @@ export default {
     },
     deleteAccount (primaryKey) {
       this.$http.delete('/accounts/' + primaryKey).then((response) => {
+        this.onSearch()
+      })
+    },
+    searchAuths (accountCode){
+      this.$http.get('/auths',{
+        params: {
+          type: 'byAccountCode',
+          accountCode: accountCode}
+      }).then((response) => {
+        const accounts = response.data
+        console.log(accounts.data)
+        this.auths = accounts.data
+        this.auths.accountCode = accountCode
+      })
+    },
+    updateAccountAuths(newAuths){
+      console.log(newAuths)
+      const p = JSON.parse(JSON.stringify(newAuths))
+      this.$http.put('/auths/accountAuths', p).then((response) => {
         this.onSearch()
       })
     }
@@ -330,6 +377,11 @@ export default {
 
   .search-row {
     margin-bottom: 1px;
+  }
+
+  .add{
+    margin-left: 20px;
+    background-color: #7e8c8d;
   }
 
   .page {
