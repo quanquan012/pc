@@ -5,8 +5,8 @@
         <el-row>
           <el-form :inline="true" :model="searchParams" ref="userSearchForm" size="mini">
             <el-col :span="6">
-              <el-form-item label="账号:" prop="accountName">
-                <el-input v-model="searchParams.accountName" placeholder="昵称"></el-input>
+              <el-form-item label="账号:" prop="accountNumber">
+                <el-input v-model="searchParams.accountNumber" placeholder="账号"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -57,13 +57,13 @@
             <span style="margin-left: 10px">{{ scope.row.createTime }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="账号" align="center">
+        <el-table-column label="账号" align="center" prop="accountNumber">
           <template slot-scope="scope">
             <el-popover trigger="hover" placement="top">
               <p>姓名: {{ scope.row.accountName }}</p>
-              <p>住址: {{ scope.row.accountPhone }}</p>
+              <p>电话: {{ scope.row.accountPhone }}</p>
               <div slot="reference" class="name-wrapper">
-                {{ scope.row.accountName }}
+                {{ scope.row.accountNumber }}
               </div>
             </el-popover>
           </template>
@@ -71,8 +71,6 @@
         <el-table-column prop="accountCode" label="账号编码" align="center"></el-table-column>
         <el-table-column prop="accountPhone" label="联系电话" align="center"></el-table-column>
         <el-table-column prop="openId" label="OPEN-ID" align="center"></el-table-column>
-        <!--<el-table-column v-if="false" prop="accountAddress" show-overflow-tooltip label="商铺地址"-->
-                         <!--align="center"></el-table-column>-->
         <el-table-column fixed="right" label="操作" align="center">
           <template slot-scope="scope">
             <el-button icon="el-icon-view" size="small" type="text" @click="handleAuth(scope.$index, scope.row)">权限</el-button>
@@ -87,13 +85,13 @@
         <el-form :model="accountForm" label-position="right" size="mini">
           <el-row>
             <el-col :span="12">
-              <el-form-item label="账号" :label-width="formLabelWidth">
+              <el-form-item label="名称" :label-width="formLabelWidth">
                 <el-input v-model="accountForm.accountName" autocomplete="off"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="电话" :label-width="formLabelWidth">
-                <el-input v-model="accountForm.accountPhone" maxlength="11" autocomplete="off"></el-input>
+              <el-form-item label="账号" :label-width="formLabelWidth">
+                <el-input v-model="accountForm.accountNumber" autocomplete="off"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -111,11 +109,18 @@
           </el-row>
           <el-row>
             <el-col :span="12">
+              <el-form-item label="电话" :label-width="formLabelWidth">
+                <el-input v-model="accountForm.accountPhone" maxlength="11" autocomplete="off"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
               <el-form-item label="日期" :label-width="formLabelWidth">
                 <el-date-picker type="datetime" :editable="false" value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期"
                                 v-model="accountForm.createTime"></el-date-picker>
               </el-form-item>
             </el-col>
+          </el-row>
+          <el-row>
             <el-col :span="12">
               <el-form-item label="密码" :label-width="formLabelWidth" hidden>
                 <el-input v-model="accountForm.accountPass" :editable="false" autocomplete="off"></el-input>
@@ -134,13 +139,13 @@
         <el-form :model="accountForm" label-position="right" size="mini">
           <el-row>
             <el-col :span="12">
-              <el-form-item label="账号" :label-width="formLabelWidth">
+              <el-form-item label="名称" :label-width="formLabelWidth">
                 <el-input v-model="accountForm.accountName" autocomplete="off"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="电话" :label-width="formLabelWidth">
-                <el-input v-model="accountForm.accountPhone" maxlength="11" autocomplete="off"></el-input>
+              <el-form-item label="账号" :label-width="formLabelWidth">
+                <el-input v-model="accountForm.accountNumber" autocomplete="off"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -158,6 +163,11 @@
             </el-col>
           </el-row>
           <el-row>
+            <el-col :span="12">
+              <el-form-item label="电话" :label-width="formLabelWidth">
+                <el-input v-model="accountForm.accountPhone" maxlength="11" autocomplete="off"></el-input>
+              </el-form-item>
+            </el-col>
             <el-col :span="12">
               <el-form-item label="日期" :label-width="formLabelWidth">
                 <el-date-picker type="datetime" :disabled="true" value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期"
@@ -221,6 +231,7 @@ export default {
       tableData: [],
       searchParams: {
         accountName: '',
+        accountNumber: '',
         accountPhone: '',
         createTime: '',
         pageNum: 1,
@@ -229,6 +240,7 @@ export default {
       accountForm: {
         openId: '',
         accountName: '',
+        accountNumber: '',
         accountCode: '',
         accountPass: '123',
         accountPhone: '',
